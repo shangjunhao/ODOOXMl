@@ -22,6 +22,32 @@ console.log(xml)
 
 // 解析
 let temp = `
+<record id="delivery_order_search" model="ir.ui.view">
+    <field name="name">出运要求搜索</field>
+    <field name="model">delivery.order</field>
+    <field name="arch" type="xml">
+        <search string="出运要求">
+            <!-- 集装箱号 -->
+            <field name="container_num"/>
+            <!-- 船务经办 -->
+            <field name="vessl_operator"/>
+            <separator/>
+            <filter name="date_ATD" string="实际船期" date="ATD"/>
+            <separator/>
+            <filter name="pack_status_draft" string="包装状态-草拟" domain="[('pack_status', '=', 'draft')]"/>
+            <filter name="pack_status_submit" string="包装状态-提交" domain="[('pack_status', '=', 'submit')]"/>
+            <filter name="pack_status_confirm" string="包装状态-确认" domain="[('pack_status', '=', 'confirm')]"/>
+            <separator/>
+            <filter name="undelivered_all_cnt_1" string="待出数量 > 0" domain="[('undelivered_all_cnt', '>', 0)]"/>
+            <filter name="undelivered_all_cnt_0" string="待出数量 = 0" domain="[('undelivered_all_cnt', '=', 0)]"/>
+            <separator/>
+            <group expand="1" string="分组">
+                <filter name="group_customer_id" string="客户" context="{'group_by':'customer_id'}"/>
+                <filter name="group_loading_port" string="出运港" context="{'group_by':'loading_port'}"/>
+            </group>
+        </search>
+    </field>
+</record>
 <!-- tree -->
 <record id="{{id}}" model="ir.ui.view">
     <field name="name">{{name}}</field>

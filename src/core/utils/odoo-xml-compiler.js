@@ -1,60 +1,6 @@
-import Utils from './odoo-utils'
-const { convertAttrs } = Utils
-
-function normalizeOpt(options) {
-  // 数据统一处理函数
-  return options
-}
-
-export function compiler(template) {
-  // 模版 => AST
-  // AST => 优化
-  // AST => Render函数
-  return (options) => {
-    let normalizeData = normalizeOpt(options)
-    return template.replace(/{{(.*?)}}/g, (node, key) => {
-      return options[key]
-    })
-  }
-}
-
-/** 第三版 **/
-const xml = {
-  star: '<data id="" name="">',
-  ende: '</data>',
-  body: '{{content}}',
-}
-const ret = {
-  record: {
-    star: '<record id="" name="">',
-    ende: '</record>',
-    body: [
-      { field: xml },
-      { field: xml },
-      {
-        field: {
-          star: '<field id="" name="">',
-          ende: '</field>',
-          body: [
-            {
-              search: {
-                star: '<search id="" name="">',
-                ende: '</search>',
-                body: [{ field: xml }, { field: xml }],
-              },
-            },
-          ],
-        },
-      },
-    ],
-  },
-}
-
 // 第三版 生成自定义代码生成器
 
-const xmlJson = {}
-export function render(reactive, vXml = xmlJson, ret = {}) {
-  // debugger
+export function render(reactive, vXml = {}, ret = {}) {
   // 解析 AST 树
   for (let key in vXml) {
     const value = vXml[key]
@@ -63,10 +9,10 @@ export function render(reactive, vXml = xmlJson, ret = {}) {
   // @todo 数据更新 局部重新渲染优化
 
   // 数据渲染
-  return ret
+  return xmlViewCode(ret)
 }
 
-function xmlObject(reactive, key, value) {
+export function xmlObject(reactive, key, value) {
   // 单个节点
 
   const $ = value['$']
@@ -75,7 +21,7 @@ function xmlObject(reactive, key, value) {
 
   // 属性集合
   if ($) {
-    let attrs = createXmlAttrs($)
+    let attrs = createXmlAttrs(reactive, $)
     xml.star = `<${key} ${attrs}>`
   } else {
     xml.star = `<${key}>`
@@ -115,12 +61,30 @@ function xmlObject(reactive, key, value) {
   return xml
 }
 
-function createXmlAttrs(attrs) {
+function createXmlAttrs(reactive, attrs) {
   // 属性处理 (vue中这里可以进行指令、事件等处理)
-  let instructs = []
+  let instructs = [':', 'v-has:'] // 已有指令
   let primordial = []
   for (let attr in attrs) {
-    if (instructs.includes(attr)) {
+    let index = instructs.findIndex((ins) => {
+      return attr.startsWith(ins)
+    })
+    if (index > -1) {
+      let key = attr.split(instructs[index])[1]
+      let val = analysisVal(reactive, attrs[attr])
+      // console.log(key, val)
+      switch (key) {
+        case ':':
+          primordial.push(`${key}='${val}'`)
+          break
+        case 'v-has:':
+          if (val !== null || val !== undefined || val !== '') {
+            primordial.push(`${key}='${val}'`)
+          }
+          break
+        default:
+          break
+      }
       // 指令解析 @todo
     } else {
       // 原生属性
@@ -132,9 +96,51 @@ function createXmlAttrs(attrs) {
 }
 
 function xmlContent(reactive, content) {
-  return content
+  let render = compiler(content)
+  let result = render(reactive)
+  return result
   // 节点内容 文本内容 or 代码域 @todo 允许有多个匹配到的表达式
   // @todo 匹配{{}} 匹配不到 返回内容 匹配到进行解析 并进行数据替换
 }
 
-function xmlViewCode(xml) {}
+function compiler(template) {
+  // 模版 => AST
+  // AST => 优化
+  // AST => Render函数
+  return (options) => {
+    return template.replace(/{{(.*?)}}/g, (node, key) => {
+      return analysisVal(options, key)
+    })
+  }
+}
+
+function analysisVal(reactive, valStr) {
+  // 解析字符串变量
+  let data = reactive
+  let keys = valStr.split('.')
+  for (let itemKey of keys) {
+    if (data[itemKey]) {
+      data = data[itemKey]
+    } else {
+      data = ''
+    }
+  }
+  return data
+}
+
+function xmlViewCode(ret) {
+  for (let key in ret) {
+    const { star, ende, body } = ret[key]
+    if (Array.isArray(body)) {
+      // 子元素
+      let bodys = []
+      for (let item of body) {
+        let xml = xmlViewCode({ key: item })
+        bodys.push(xml)
+      }
+      return star + bodys.join('') + ende
+    } else {
+      return star + body + ende
+    }
+  }
+}

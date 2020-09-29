@@ -1,6 +1,6 @@
 import { computed, reactive, ref, unref } from 'vue'
-import Utils from '../code/odoo-utils'
-import compiler from '../code/odoo-xml-compiler'
+import Utils from '../odoo-utils'
+import compiler from '../odoo-xml-compiler'
 
 const { convertAttrs } = Utils
 

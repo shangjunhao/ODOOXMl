@@ -1,0 +1,1 @@
+{"key":"filter","ast":{"template":{"filter":{"$":{"v-if":"",":name":"",":string":"","date":"item._name"}}}},"temp":"<template>\n  <filter v-if=\"\" :name=\"\" :string=\"\" date=\"item._name\"/>\n</template>"}

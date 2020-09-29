@@ -58,7 +58,7 @@ const Utils = {
     // 计算Attrs | [ {key, val}]
     let res = attrs.map((item) => {
       const { key, val } = item
-      return Utils.convertAttr(key, val)
+      return convertAttr(key, val)
     })
     return res.join(' ')
   },
@@ -101,7 +101,7 @@ const Utils = {
     // 字段名
     field._isAllowGroup = data.store
     // 是否允许分组
-    field._attrs = [{ key: 'widget', val: Utils.convertWidget(data) }]
+    field._attrs = [{ key: 'widget', val: convertWidget(data) }]
     if (attrs && attrs.length) {
       for (let item of attrs) {
         field._attrs.push(item)

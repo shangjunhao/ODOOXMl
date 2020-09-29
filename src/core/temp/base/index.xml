@@ -1,0 +1,11 @@
+<!-- 字段 -->
+<field :name="name"/>
+
+
+<!-- 搜索 -->
+
+<filter :name="fielter.name" :string="fielter.string" domain="[('currency_id.name', '=', 'USD')]"/>
+
+<filter :name="fielter.name" :string="fielter.string" date="ETD"/>
+
+<filter :name="fielter.name" :string="fielter.string" context="{'group_by':'fielter.name'}"/>

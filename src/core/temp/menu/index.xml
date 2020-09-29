@@ -1,0 +1,8 @@
+<!-- menu -->
+<record :id="menu.id" model="ir.actions.act_window">
+    <field name="name">{{menu.name}}</field>
+    <field name="action">{{action.id}}</field>
+    <field name="parent">{{menu.parent}}</field>
+    <field name="groups">{{menu.groups}}</field>
+    <field name="sequence">{{menu.sequence}}</field>
+</record>
