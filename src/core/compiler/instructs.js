@@ -7,12 +7,10 @@ export const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/
 
 export function instructsRegionState(attrs, reactive) {
   // 局部变量 v-for 数据
-  // console.log(attrs)
   if (!attrs) return
   for (let attr in attrs) {
     if (attr.startsWith('v-for')) {
       const inMatch = attrs[attr].match(forAliasRE)
-      // console.log('inMatch', inMatch)
       const key = inMatch[1] || ''
       // val 是数组 如果不是 抛出错误
       const val = analysisVal(reactive, inMatch[2]) || []
@@ -24,7 +22,6 @@ export function instructsRegionState(attrs, reactive) {
 }
 
 export function analysisAstAttrs(attrs, reactive, a, b) {
-  // console.log('attrs', attrs)
   if (!attrs) return {}
   // 属性处理 (vue中这里可以进行指令、事件等处理)
   let primordial = {}
@@ -52,7 +49,6 @@ export function analysisAstAttrs(attrs, reactive, a, b) {
         default:
           break
       }
-      // 指令解析 @todo
     } else {
       // 原生属性
       process[attr] = attrs[attr]

@@ -3,7 +3,6 @@ export function analysisVal(reactive, valStr, key, val) {
   // a.b.c.d
   // alias.a
   let data = reactive
-  console.log('valStr,  ', valStr, key, val, '\t\r\n\t')
   let keys = valStr.split('.')
   for (let itemKey of keys) {
     if (itemKey === key) {

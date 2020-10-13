@@ -1,4 +1,4 @@
-import creatApp from './core/vuemini/index'
+import creatApp from './core/compiler/index'
 import pageItem from './page/ss_sample/data'
 import useAppCode from './core/temp/App/index'
 
