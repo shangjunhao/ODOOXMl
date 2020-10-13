@@ -2,6 +2,8 @@
 <odoo>
   <data>
     <!-- tree -->
-    <v-tree v-if="tree" :data="tree">{{tree.order}}</v-tree>
+    <tree :data="tree">
+      <li v-for="item in tree.trees" :key="item">{{item}}</li>
+    </tree>
   </data>
 </odoo>

@@ -1,11 +1,34 @@
 // 指令属性解析
+import { analysisVal } from './text'
 
-let instructs = [':', 'v-has:', 'v-if'] // 已有指令
+let instructs = [':', 'v-has:', 'v-if', 'v-for'] // 已有指令
 
-export default function analysisAstAttrs(attrs, reactive) {
-  console.log(attrs, reactive)
+export const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/
+
+export function instructsRegionState(attrs, reactive) {
+  // 局部变量 v-for 数据
+  // console.log(attrs)
+  if (!attrs) return
+  for (let attr in attrs) {
+    if (attr.startsWith('v-for')) {
+      const inMatch = attrs[attr].match(forAliasRE)
+      // console.log('inMatch', inMatch)
+      const key = inMatch[1] || ''
+      // val 是数组 如果不是 抛出错误
+      const val = analysisVal(reactive, inMatch[2]) || []
+      // 删除 防止无限递归
+      delete attrs[attr]
+      return { key, val }
+    }
+  }
+}
+
+export function analysisAstAttrs(attrs, reactive, a, b) {
+  // console.log('attrs', attrs)
+  if (!attrs) return {}
   // 属性处理 (vue中这里可以进行指令、事件等处理)
   let primordial = {}
+  let process = {}
   for (let attr in attrs) {
     let index = instructs.findIndex((ins) => {
       return attr.startsWith(ins)
@@ -13,17 +36,13 @@ export default function analysisAstAttrs(attrs, reactive) {
     if (index > -1) {
       let ins = instructs[index]
       let key = attr.split(instructs[index])[1]
-      let val = analysisVal(reactive, attrs[attr])
-      // console.log(key, val)
+      let val = analysisVal(reactive, attrs[attr], a, b)
       switch (ins) {
         case ':':
           primordial[key] = val
           break
         case 'v-if':
-          if (true) {
-            // !val
-            primordial['_isNotExhibition'] = true
-          }
+          primordial['_isNotExhibition'] = val
           break
         case 'v-has:':
           if (val !== null || val !== undefined || val !== '') {
@@ -36,23 +55,20 @@ export default function analysisAstAttrs(attrs, reactive) {
       // 指令解析 @todo
     } else {
       // 原生属性
-      primordial[attr] = attrs[attr]
+      process[attr] = attrs[attr]
     }
   }
-  // console.log(primordial)
-  return primordial
+  return morgeAttrs(primordial, process)
 }
 
-function analysisVal(reactive, valStr) {
-  // 解析字符串变量
-  let data = reactive
-  let keys = valStr.split('.')
-  for (let itemKey of keys) {
-    if (data[itemKey]) {
-      data = data[itemKey]
-    } else {
-      data = ''
-    }
+function morgeAttrs(attrs, process) {
+  // 合并
+  let O = Object.create({})
+  for (let key in attrs) {
+    O[key] = attrs[key]
   }
-  return data
+  for (let item in process) {
+    O[item] = attrs[item]
+  }
+  return O
 }

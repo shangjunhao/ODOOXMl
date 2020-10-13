@@ -15,6 +15,7 @@ export default (data) => {
       const { model, fields } = initData(props)
       props.model = model
       props.fields = fields
+      props.list = [1, 2, 3, 4]
       return props
     },
   }
