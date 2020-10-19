@@ -6,5 +6,10 @@ module.exports = {
       changeOrigin: true,
       rewrite: (path) => path.replace(/^\/web/, ''),
     },
+    '/node': {
+      target: 'http://localhost:3001/',
+      changeOrigin: true,
+      rewrite: (path) => path.replace(/^\/web/, ''),
+    },
   },
 }
