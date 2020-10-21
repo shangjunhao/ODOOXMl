@@ -1,3 +1,73 @@
+const form = `
+<record :id="form.id" model="ir.ui.view">
+  <field name="name">{{ form.name }}</field>
+  <field name="model">{{ model._modelName }}</field>
+  <field name="arch" type="xml">
+      <form 
+        :string="form.name"
+        :create="form.create"
+        :edit="form.edit"
+        :delete="form.del"
+      >
+          <header>
+            <button 
+              v-for="btn in form.btns"
+              type="object"
+              :name="btn.fn" 
+              :string="btn.name" 
+              :attrs="btn.attrs"
+            />
+
+            <field 
+              readonly="1"
+              widget="statusbar"
+              :name="form.state.name"
+              :statusbar_visible="form.state.states"
+            />
+
+          </header>
+          <sheet>
+              <div class="oe_button_box" name="button_box">
+                  <button
+                    v-for="btn in form.opens"
+                    type="object"
+                    :name="open.fn"
+                    :icon="open.icon"
+                    :help="open.help"
+                    :attrs="open.attrs" 
+                    :string="open.name"
+                    class="oe_stat_button"
+                  >
+                    <field :name="open.field"/>
+                  </button>
+              </div>
+              <div class="oe_title">
+                  <h1>
+                      <field name="name" readonly="1"/>
+                  </h1>
+              </div>
+              {{ form.fields }}
+              <notebook>
+                  {{ form.pages }}
+                  <page string="单据信息">
+                      <group>
+                          <group>
+                              <field name="create_uid" string="创建人"/>
+                              <field name="write_uid" string="修改人"/>
+                          </group>
+                          <group>
+                              <field name="create_date" string="创建时间"/>
+                              <field name="write_date" string="修改时间"/>
+                          </group>
+                      </group>
+                  </page>
+              </notebook>
+          </sheet>
+      </form>
+  </field>
+</record>
+`
+
 export default `
 <odoo>
 <data>
@@ -56,20 +126,20 @@ export default `
   </record>
 
   <!-- groups group.name -->
-  <record v-if="children" v-for="group in category.groups" :id="group.id" model="res.groups">
+  <record v-for="group in category.groups" :id="group.id" model="res.groups">
     <field name="name">{{ group.name }}</field>
     <field name="category_id" :ref="model._whole"></field>
     <field name="implied_ids" :eval="group.eval"></field>
   </record>
 
   <!-- menu -->
-  <record :id="menu.id" model="ir.actions.act_window">
-    <field name="name">{{ menu.name }}</field>
-    <field name="action">{{ action.id }}</field>
-    <field name="parent">{{ menu.parent }}</field>
-    <field name="groups">{{ menu.groups }}</field>
-    <field name="sequence">{{ menu.sequence }}</field>
-  </record>
+  <menuitem 
+    :id="menu.id" 
+    :name="menu.name" 
+    :action="action.id"
+    :parent="menu.parent" 
+    :groups="menu.groups" 
+    :sequence="menu.sequence"/>
 
   <!-- menu action -->
   <record v-for="server in business" :id="server.id" model="ir.actions.server">
@@ -80,6 +150,9 @@ export default `
     <field name="state">code</field>
     <field name="code">{{ server.code }}</field>
   </record>
+
+  <!-- form -->
+  ${form}
 
   <!-- end -->
 </data>

@@ -44,9 +44,9 @@ function analysisAstAttrs(attrs, reactive, ctx) {
         case ':':
           primordial[key] = val
           break
-        case 'v-if':
-          primordial['_isNotExhibition'] = val
-          break
+        // case 'v-if':
+        //   primordial['_isNotExhibition'] = val
+        //   break
         case 'v-has:':
           if (val !== null || val !== undefined || val !== '') {
             primordial[key] = val

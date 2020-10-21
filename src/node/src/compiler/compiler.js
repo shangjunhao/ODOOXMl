@@ -54,9 +54,9 @@ function analysisAstExample(
   }
 
   // 处理结果
-  if (region && region.if && !region.val) {
-    console.log('region', target, renderAst, item)
-  }
+  // if (region && region.if && !region.val) {
+  //   console.log('region', target, renderAst, item)
+  // }
   if (Array.isArray(renderAst)) {
     if (Array.isArray(item)) {
       renderAst.push(...item)

@@ -1,21 +1,35 @@
 // 获取基础数据并处理 menus groups models fields
+import axios from 'axios'
 import odoo from './odoo-http-utils'
 
-function init(callback) {
-  Promise.all([getMenus(), getGroups(), getModels(), getFields()]).then(
-    (result) => {
-      let res = {}
-      res.menus = result[0].records
-      res.groups = result[1].records
-      res.models = result[2].records
-      res.fields = result[3].records
+// function init(callback) {
+//   Promise.all([getMenus(), getGroups(), getModels(), getFields()]).then(
+//     (result) => {
+//       let res = {}
+//       res.menus = result[0].records
+//       res.groups = result[1].records
+//       res.models = result[2].records
+//       res.fields = result[3].records
 
-      callback && callback(res)
-    }
-  )
+//       callback && callback(res)
+//     }
+//   )
+// }
+
+// export default init
+
+export function createFile(params) {
+  const Http = axios.create({
+    baseURL: 'node/', // 设置请求地址
+    timeout: 3000, //设置超时
+    withCredentials: false, // 是否允许带cookie这些
+    responseType: 'json',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8',
+    },
+  })
+  return Http.post('/node/a', JSON.stringify(params))
 }
-
-export default init
 
 export function getMenus() {
   const model = 'ir.model.data'

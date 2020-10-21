@@ -5,11 +5,14 @@
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite App</title>
-    <script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.0.0/highlight.min.js"></script>
   </head>
   <body>
     <div id="app"></code>
       <button id="createPage">更新文件</button>
-    <script type="module" src="/src/main.js"></script>
+      <script type="module" src="./src/index.js"></script>
+      <script>
+        const btn = document.querySelector('#createPage')
+        btn.onclick = ergodicAllPage
+      </script>
   </body>
 </html>

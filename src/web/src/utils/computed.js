@@ -3,7 +3,7 @@ import {
   convertName,
   convertModel,
   convertField,
-} from './utils/odoo-utils'
+} from './odoo-utils'
 
 function getMyFields(fieldsObj, str, type) {
   let views = []
@@ -131,22 +131,27 @@ export default function getData(option, model, fields) {
   // 权限视图
   if (option.children) {
     let implied_ids = {}
-    option.category.name = `${model._name} 权限组`
-    option.category.groups = option.category.groups.map((item) => {
+    option.category.name = `${model._name}-权限组`
+    option.category.groups = option.category.baseGroups.map((item) => {
+      let groupItem = {}
+      groupItem.eval = []
       const { id, name, base } = item
-      item.id = `group_${model._model}_${id}`
-      item.name = `辅助组-${model._name}-${name}`
-      implied_ids[id] = item.id // 记录
-      item.eval = []
+
+      groupItem.id = `group_${model._model}_${id}`
+      groupItem.name = `辅助组-${model._name}-${name}`
+
+      // 记录已有ID
+      implied_ids[id] = groupItem.id
+
       base.map((itemID) => {
         if (implied_ids[itemID]) {
-          item.eval.push(`(4,ref('${implied_ids[itemID]}'))`)
+          groupItem.eval.push(`(4,ref('${implied_ids[itemID]}'))`)
         } else {
           console.log('分组继承出错, ', implied_ids[itemID])
         }
       })
-      item.eval = item.eval.toString()
-      return item
+      groupItem.eval = groupItem.eval.toString()
+      return groupItem
     })
   }
 
