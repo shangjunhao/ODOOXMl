@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<odoo>
+  <data>
+    <record id="product_template_tree_test" model="ir.ui.view">
+      <field name="name">产品模板表格</field>
+      <field name="model">product.template</field>
+      <field name="arch" type="xml">
+        <tree string="产品模板表格" create="1" edit="1" delete="1" default_order="id asc">
+          <field name="customer_id"/>
+          <field name="supplier_id"/>
+          <field name="customer_pro_no"/>
+          <field name="write_date" widget="date"/>
+          <field name="valuation"/>
+        </tree>
+      </field>
+    </record>
+    <record id="product_template_search_test" model="ir.ui.view">
+      <field name="name">产品模板搜索</field>
+      <field name="model">product.template</field>
+      <field name="arch" type="xml">
+        <search string="产品模板搜索">
+          <field name="supplier_id"/>
+          <separator/>
+          <filter name="customer_pro_no_1" domain="[]" string="客户货号大于0"/>
+          <filter name="customer_pro_no_0" domain="[]" string="客户货号小于0"/>
+          <filter name="account_price_state" string="核价状态"/>
+          <filter name="date_write_date" widget="date" date="write_date" string="最后更新时间"/>
+          <group expand="1" string="分组">
+            <filter name="group_customer_id" string="客户" context="{'group_by': 'customer_id'}"/>
+            <filter name="group_supplier_id" string="供应商" context="{'group_by': 'supplier_id'}"/>
+            <filter name="group_customer_pro_no" string="客户货号" context="{'group_by': 'customer_pro_no'}"/>
+          </group>
+        </search>
+      </field>
+    </record>
+    <record id="product_template_action_test" model="ir.actions.act_window">
+      <field name="name">产品模板</field>
+      <field name="domain">[]</field>
+      <field name="context">{}</field>
+      <field name="res_model">product.template</field>
+      <field name="view_mode">tree</field>
+      <field eval="[(5, 0, 0),(0, 0, {'view_mode': 'tree', 'view_id': ref('product_template_tree_test')}),]" name="view_ids"/>
+      <field ref="product_template_search_test" name="search_view_id"/>
+    </record>
+    <record id="product_template_menu_test" model="ir.actions.act_window">
+      <field name="name">产品模板</field>
+      <field name="action">product_template_action_test</field>
+      <field name="parent">ss_purchase.purchase_order_menu_package</field>
+      <field name="groups">group_product_template_lock</field>
+      <field name="sequence">1</field>
+    </record>
+    <record id="action_action_state_submit" model="ir.actions.server">
+      <field name="name">提交</field>
+      <field name="domain">[]</field>
+      <field ref="ss_sample.model_product_template" name="model_id"/>
+      <field ref="ss_sample.model_product_template" name="binding_model_id"/>
+      <field name="state">code</field>
+      <field name="code">action=records.action_state_submit()</field>
+    </record>
+    <record id="action_action_state_draft" model="ir.actions.server">
+      <field name="name">撤销提交</field>
+      <field name="domain">[]</field>
+      <field ref="ss_sample.model_product_template" name="model_id"/>
+      <field ref="ss_sample.model_product_template" name="binding_model_id"/>
+      <field name="state">code</field>
+      <field name="code">action=records.action_state_draft()</field>
+    </record>
+  </data>
+</odoo>

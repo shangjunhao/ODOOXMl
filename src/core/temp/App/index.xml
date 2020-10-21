@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-  <data>
-    <!-- tree -->
-    <tree :data="tree">
-      <li v-for="item in tree.trees" :key="item">{{item}}</li>
-    </tree>
-  </data>
-</odoo>

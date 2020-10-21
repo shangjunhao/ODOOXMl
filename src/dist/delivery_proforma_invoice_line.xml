@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<odoo>
+  <data>
+    <record id="delivery_proforma_invoice_line_tree_test" model="ir.ui.view">
+      <field name="name">议付单据明细表格</field>
+      <field name="model">delivery.proforma.invoice.line</field>
+      <field name="arch" type="xml">
+        <tree string="议付单据明细表格" create="1" edit="1" delete="1" default_order="id asc">
+          <field name="delivery_order_id"/>
+          <field name="delivery_proforma_invoice_id"/>
+          <field name="customer_id"/>
+          <field name="name"/>
+          <field name="description_sale"/>
+          <field name="sale_order_id"/>
+          <field name="customer_po"/>
+          <field name="customer_series"/>
+          <field name="customer_material"/>
+          <field name="customer_uom"/>
+          <field name="outstock_qty"/>
+          <field name="sale_price_unit"/>
+          <field name="amount"/>
+          <field name="outstock_package_qty"/>
+          <field name="outstock_vol_cbm"/>
+          <field name="outstock_grosswgt_kg"/>
+          <field name="outstock_netwgt_kg"/>
+          <field name="hts_code"/>
+          <field name="ss_delivery_container_no"/>
+          <field name="ss_delivery_seal_no"/>
+        </tree>
+      </field>
+    </record>
+    <record id="delivery_proforma_invoice_line_search_test" model="ir.ui.view">
+      <field name="name">议付单据明细搜索</field>
+      <field name="model">delivery.proforma.invoice.line</field>
+      <field name="arch" type="xml">
+        <search string="议付单据明细搜索">
+          <separator/>
+          <filter name="name_1" domain="[]" string="客户货号大于0"/>
+          <filter name="name_0" domain="[]" string="客户货号小于0"/>
+          <group expand="1" string="分组">
+            <filter name="group_customer_id" string="客户" context="{'group_by': 'customer_id'}"/>
+            <filter name="group_name" string="客户货号" context="{'group_by': 'name'}"/>
+          </group>
+        </search>
+      </field>
+    </record>
+    <record id="delivery_proforma_invoice_line_action_test" model="ir.actions.act_window">
+      <field name="name">议付单据明细</field>
+      <field name="domain">[]</field>
+      <field name="context">{}</field>
+      <field name="res_model">delivery.proforma.invoice.line</field>
+      <field name="view_mode">tree</field>
+      <field eval="[(5, 0, 0),(0, 0, {'view_mode': 'tree', 'view_id': ref('delivery_proforma_invoice_line_tree_test')}),]" name="view_ids"/>
+      <field ref="delivery_proforma_invoice_line_search_test" name="search_view_id"/>
+    </record>
+    <record id="delivery_proforma_invoice_line_menu_test" model="ir.actions.act_window">
+      <field name="name">议付单据明细</field>
+      <field name="action">delivery_proforma_invoice_line_action_test</field>
+      <field name="parent">ss_purchase.purchase_order_menu_package</field>
+      <field name="groups">group_delivery_proforma_invoice_line_lock</field>
+      <field name="sequence">1</field>
+    </record>
+    <record id="action_action_state_submit" model="ir.actions.server">
+      <field name="name">提交</field>
+      <field name="domain">[]</field>
+      <field ref="ss_purchase.model_delivery_proforma_invoice_line" name="model_id"/>
+      <field ref="ss_purchase.model_delivery_proforma_invoice_line" name="binding_model_id"/>
+      <field name="state">code</field>
+      <field name="code">action=records.action_state_submit()</field>
+    </record>
+    <record id="action_action_state_draft" model="ir.actions.server">
+      <field name="name">撤销提交</field>
+      <field name="domain">[]</field>
+      <field ref="ss_purchase.model_delivery_proforma_invoice_line" name="model_id"/>
+      <field ref="ss_purchase.model_delivery_proforma_invoice_line" name="binding_model_id"/>
+      <field name="state">code</field>
+      <field name="code">action=records.action_state_draft()</field>
+    </record>
+  </data>
+</odoo>

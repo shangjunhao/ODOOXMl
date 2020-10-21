@@ -1,57 +1,47 @@
-import creatApp from './core/compiler/index'
-import pageItem from './page/ss_sample/data'
-import useAppCode from './core/temp/App/index'
+import axios from 'axios'
+import { getModels, getFields } from './web/http/odoo-http'
 
-// 单一模型的视图、权限处理
-// 一、根据配置数据获取单个模型的数据(模型、字段) 并初步处理
-// 二、获取根组件
+import temp from './web/temp'
+import getData from './web/computed'
+// import config from './web/view/delivery_order_line_tree'
+// import config from './web/view/delivery_proforma_invoice'
+import config from './web/view/delivery_proforma_invoice_line'
+
+async function createFile(params) {
+  const Http = axios.create({
+    baseURL: 'node/', // 设置请求地址
+    timeout: 3000, //设置超时
+    withCredentials: false, // 是否允许带cookie这些
+    responseType: 'json',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8',
+    },
+  })
+  return Http.post('/node/a', JSON.stringify(params))
+}
+
+console.log(config)
 ;(async () => {
-  for (let pageItemData of [pageItem]) {
-    // useAppCode.data = pageItemData
-    await creatApp(useAppCode(pageItemData))
-  }
+  const { key, module } = config
+  const key2 = key.replace('model_', '').replace(/\_/g, '.')
+  Promise.all([getModels(key, module), getFields(key2)]).then(
+    ([model, fields]) => {
+      // console.log(model, fields, temp)
+      // 校验
+      if (model.length > 0 && fields.length > 0) {
+        // 获取填充数据
+        const pageData = getData(config, model.records[0], fields.records)
+        // 调用生成接口
+        // console.log(pageData)
+        const parmas = {
+          temp,
+          data: pageData,
+        }
+        createFile(parmas).then((res) => {
+          // console.log(res.data)
+          // console.log(JSON.stringify(res.data.xmlAst))
+        })
+      }
+    }
+  )
 })()
-
-// import { createApp } from 'vue'
-// import App from './assets/App.vue'
-// createApp(App).mount('#app')
-
-// 生成文件入口
-// import datas from './data'
-// import usePageViews from './components/page'
-// ;(async () => {
-//   const data = datas[0]
-//   const xml = (await usePageViews(data)) || ''
-//   const content = `<data>${xml}</data>`
-//   console.log(content)
-// })()
-
-// 渲染函数
-// import xmlJson from './code/data.json'
-// import { render } from './code/odoo-xml-compiler'
-// console.log(xmlJson, render)
-// console.log(render({}, xmlJson, {}))
-
-// 页面测试
-// import { useTreeView } from './core/temp/table/view/tree'
-
-// let { tree } = useTreeView({})
-
-// 接口测试
-// import porps from './page/ss_sample/data'
-// import { convertModel } from './core/utils/odoo-utils'
-// import { getFields, getModels } from './core/server/odoo-http'
-
-// getModels(porps.key, porps.module).then((res) => {
-//   console.log(convertModel(res.records[0]))
-// })
-
-// 模版解析测试 失败
-// import { readXmlToAst } from './core/server/odoo-http-xml2ast'
-
-// readXmlToAst(
-//   '/../temp/form/index.xml',
-//   '/../../dist/ss_sample/product_template_tree_h.xml',
-//   {}
-// )
-// console.log(2)

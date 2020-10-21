@@ -1,3 +1,0 @@
-<template>
-  <filter v-if="" :name="" :string="" date="item._name"/>
-</template>

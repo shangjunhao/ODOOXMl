@@ -1,9 +1,0 @@
-<!-- menu action -->
-<record :id="server.id" model="ir.actions.server">
-    <field name="name">{{server.name}}</field>
-    <field name="domain">{{server.domain}}</field>
-    <field name="model_id" :ref="server.model_id"/>
-    <field name="binding_model_id" :ref="server.model_id"/>
-    <field name="state">code</field>
-    <field name="code">action=records.{{server.methods}}()</field>
-</record>

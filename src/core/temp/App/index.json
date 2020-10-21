@@ -1,1 +1,0 @@
-{"key":"App","ast":{"odoo":{"data":{"tree":{"$":{":data":"tree"},"li":{"_":"{{item}}","$":{"v-for":"item in tree.trees",":key":"item"}}}}}},"temp":"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<odoo>\n  <data>\n    <!-- tree -->\n    <tree :data=\"tree\">\n      <li v-for=\"item in tree.trees\" :key=\"item\">{{item}}</li>\n    </tree>\n  </data>\n</odoo>"}
