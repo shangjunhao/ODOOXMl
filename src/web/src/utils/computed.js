@@ -28,6 +28,20 @@ function getMyFields(fieldsObj, str, type) {
       let item = fieldsObj[name]
       let base = item._base // 请求到的属性
       let attrs = Object.assign({}, item._attrs)
+
+      // if (type === 'filters') {
+      // }
+
+      // if (type === 'groups') {
+      //   if (item._isAllowGroup) {
+      //     attrs.name = `group_${item._key}`
+      //     attrs.string = item._name
+      //     attrs.context = `{'group_by': '${item._key}'}`
+      //   } else {
+      //     console.error('不可分组对象: ', item._key, item._name)
+      //   }
+      // }
+      // results.push({ attrs })
       switch (type) {
         case 'tree':
           // attrs.string = item._name
@@ -39,19 +53,31 @@ function getMyFields(fieldsObj, str, type) {
           if (viewItem.domain) {
             // 该配置参数为对象 可能有domain属性
             attrs.domain = viewItem.domain
-            attrs.name = item._key + viewItem.sign
+            attrs.name = item._key + '_' + viewItem.sign
             attrs.string = item._name + viewItem.string
-          } else if (base.ttype === 'selection') {
-            attrs.string = item._name
+          } else if (base.ttype === 'selection' && viewItem.selection) {
+            let getFiltersSelection = (filter, item) => {
+              return {
+                name: item._key + '_' + filter.key,
+                string: item._name + '-' + filter.name,
+                domain: `[('${item._key}', '=', '${filter.key}')]`
+              }
+            }
+            let first = viewItem.selection.shift()
+            attrs = getFiltersSelection(first, item)
+            for(let filter of viewItem.selection) {
+              let filterAttrs = getFiltersSelection(filter, item)
+              results.push(filterAttrs)
+            }
             // 这里需要获取
           } else if (base.ttype === 'datetime' || base.ttype === 'date') {
-            attrs.name = `date_${item._key}`
+            attrs.name = `${item._key}_date`
             attrs.date = item._key
             attrs.string = item._name
           } else {
           }
 
-          // 判断与上一个name是否相同
+          // 判断与上一个name是否相同][';/]
           if (i === 2) {
             separator = true
           }
@@ -86,7 +112,6 @@ export default function getData(option, model, fields) {
   // 模型字段第一次处理
   option.fields = fields = fields.map((item) => convertField(item))
 
-  let fieldsObj = {}
   for (let field of fields) {
     fieldsObj[field._name] = field
   }
@@ -129,7 +154,7 @@ export default function getData(option, model, fields) {
   })
 
   // 权限视图
-  if (option.children) {
+  if (option.children && !option.sign) {
     let implied_ids = {}
     option.category.name = `${model._name}-权限组`
     option.category.groups = option.category.baseGroups.map((item) => {
@@ -158,3 +183,47 @@ export default function getData(option, model, fields) {
   // 返回数据
   return option
 }
+
+let fieldsObj = {}
+
+function checkField({name}) {
+  // 校验字段是否存在
+  if (!fieldsObj[name]) {
+    console.error('未找到字段: ', name)
+  }
+  return fieldsObj[name]
+}
+
+function formatParams(strVal) {
+  // 格式化配置参数 return [{ name, attrs?, domain?, string?, sign?, selection? }]
+  let views = []
+  if (typeof strVal === 'string') {
+    views = str.split('、') || []
+    views = views.map((item) => {
+      'name': item
+    })
+  } else if (Array.isArray(str)) {
+    views = str
+  }
+  return views
+}
+
+function createFieldData(strVal, type) {
+  const jsonVal = formatParams(strVal)
+  for (let index = 0; index < jsonVal.length; index++) {
+    const element = jsonVal[index];
+    if (checkField(element)) {
+      switch(type) {
+        case 'groups':
+          break
+        case 'groups':
+          break
+        default:
+            break
+      }
+    }
+  }
+}
+
+
+//filters

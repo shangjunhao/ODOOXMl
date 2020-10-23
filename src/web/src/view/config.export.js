@@ -4,8 +4,15 @@ import delivery_proforma_invoice_line from './delivery_proforma_invoice_line'
 
 export default {
   pages: [
-    delivery_order_line_tree,
-    delivery_proforma_invoice,
-    delivery_proforma_invoice_line,
+    // delivery_order_line_tree,
+    // delivery_proforma_invoice,
+    // delivery_proforma_invoice_line,
+  ],
+  power: [
+    {
+      id: '',
+      name: '',
+      children: [],
+    },
   ],
 }

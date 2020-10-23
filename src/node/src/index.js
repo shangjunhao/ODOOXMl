@@ -20,7 +20,6 @@ async function getXmlCode(xmlAst) {
 
 async function getXmlFile(xmlCode, name) {
   // xml => file
-  // 写入之前先将原有的数据清空
   let filePath = path.join(viewsPath, `/base_${name}.xml`)
   fs.writeFileSync(filePath, xmlCode)
   console.log('loader-xml-file: xml文件生成成功!', name)

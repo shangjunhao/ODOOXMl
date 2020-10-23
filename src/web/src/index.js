@@ -9,8 +9,16 @@ console.log(getPages)
 
 function generate(config) {
   const { key, module } = config
-  const key2 = key.replace('model_', '').replace(/\_/g, '.')
-  Promise.all([getModels(key, module), getFields(key2)]).then(
+
+  // model_product_template
+  // const key1 = key
+  // const key2 = key.replace('model_', '').replace(/\_/g, '.')
+
+  // product.template
+  const key1 = 'model_' + key.replace(/\./g, '_')
+  const key2 = key
+
+  Promise.all([getModels(key1, module), getFields(key2)]).then(
     ([model, fields]) => {
       // 校验
       if (model.length > 0 && fields.length > 0) {

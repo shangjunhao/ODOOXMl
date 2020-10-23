@@ -152,7 +152,7 @@ export default `
   </record>
 
   <!-- form -->
-  ${form}
+  ${}
 
   <!-- end -->
 </data>
